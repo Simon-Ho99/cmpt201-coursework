@@ -1,4 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,12 +11,17 @@ int main() {
   ssize_t chars_read;
 
   while (1) {
-    printf("Enter text: ");
+    printf("Please enter some text: ");
 
     chars_read = getline(&lineptr, &n, stdin);
 
     if (chars_read == -1) {
-      break;
+      if (feof(stdin)) {
+        break;
+      } else {
+        perror("getline failed");
+        exit(EXIT_FAILURE);
+      }
     }
 
     if (chars_read == 1 && lineptr[0] == '\n') {
