@@ -19,24 +19,23 @@ int main() {
     if (getline(&line, &size, stdin) == -1) {
       perror("getline");
       free(line);
-      return 1;
+      exit(EXIT_FAILURE);
     }
 
     line[strcspn(line, "\n")] = '\0';
 
     pid_t pid = fork();
 
-    // child
-    if (pid == 0) {
-      execlp(line, line, NULL);
-      printf("Exec failure");
-      exit(1);
-    } else if (pid > 0) {
-      // parent
-      if (waitpid(pid, NULL, 0) == -1) {
-        perror("waitpid");
+    if (pid) {
+      int wstatus = 0;
+      if (waitpid(pid, &wstatus, 0) == -1) {
         free(line);
-        return 1;
+        exit(EXIT_FAILURE);
+      }
+    } else {
+      if (execlp(line, line, NULL) == -1) {
+        perror("Exec failure");
+        exit(EXIT_FAILURE);
       }
     }
   }
