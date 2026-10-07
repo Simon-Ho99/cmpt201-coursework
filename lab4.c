@@ -50,7 +50,7 @@ int main(void) {
   }
 
   struct header *first_block = (struct header *)new_space;
-  struct header *second_block = ((struct header *)(char *)new_space + BLOCK_SIZE);
+  struct header *second_block = (struct header *)((char *)new_space + BLOCK_SIZE);
 
   first_block->size = BLOCK_SIZE;
   first_block->next = NULL;
